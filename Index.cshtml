@@ -1,0 +1,134 @@
+﻿@using System.Web.Optimization
+@{
+    ViewBag.Title = "Lista de requerentes";
+}
+@section scripts{
+@Scripts.Render("~/bundles/jquery")
+    <script src="~/Scripts/angular.min.js"></script>
+    <script src="~/Scripts/mg/packages/angular-ui/mask.min.js"></script>
+    <script src="~/Scripts/ScriptsRequerente/requerenteApp.js"></script>
+    <script src="~/Scripts/ScriptsRequerente/controllersRequerente.js"></script>
+    
+}
+
+<div ng-app="RequerenteApp" class="form-horizontal">
+    
+        <h2>Cadastro  Requerente</h2>
+
+        <div ng-controller="ControllerRequerente">
+            <form class="form-horizontal" name="requerenteForm">
+
+                <div class="form-group" ng-hide="aRequerente.Cnpj.length > 0" ng-class="{ 'has-error' : requerenteForm.aRequerenteCpf.$invalid && !requeretenForm.aRequerenteCpf.$pristine }">
+                    <label class="control-label col-md-2">CPF</label>
+                    <div class="col-md-10">
+                        <input class="form-control " id="aRequerenteCpf" name="aRequerenteCpf" ng-model="aRequerente.Cpf" ng-blur="RequerentePorCpf(aRequerente.Cpf)" type="text" value="" ui-mask="999.999.999-99" ng-minlength="14">
+                        <p ng-show="requerenteForm.aRequerenteCpf.$error.minlength" class="help-block">Cpf no mínimo 11 caracteres.</p>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-hide="aRequerente.Cpf.length > 0" ng-class="{ 'has-error' : requerenteForm.aRequerenteCnpj.$invalid && !requeretenForm.aRequerenteCnpj.$pristine }">
+                    <label class="control-label col-md-2">CNPJ</label>
+                    <div class="col-md-10">
+                        <input class="form-control" id="aRequerenteCnpj" name="aRequerenteCnpj" ng-model="aRequerente.Cnpj" type="text" ng-blur="RequerentePorCnpj(aRequerente.Cnpj)" value="" ui-mask="99.999.999/9999-99" ng-minlength="18" />
+                        <p ng-show="requerenteForm.aRequerenteCnpj.$error.minlength" class="help-block">Cnpj no mínimo 14 caracteres.</p>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-class="{ 'has-error' : requerenteForm.aRequerenteNome.$invalid && !requeretenForm.aRequerenteNome.$pristine }">
+                    <label class="control-label col-md-2">Nome</label>
+                    <div class="col-md-10">
+                        <input class="form-control " id="Nome" name="aRequerenteNome" ng-model="aRequerente.Nome"  type="text" value="{{aRequerente.Nome}}" ng-minlength="5" />
+                        <p ng-show="requerenteForm.aRequerenteNome.$error.minlength" class="help-block">Nome no mínimo 05 caracteres.</p>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error' : requerenteForm.tipo.$invalid && !requeretenForm.tipo.$pristine }">
+                    <label class="control-label col-md-2">Tipo Requerente</label>
+                    <div class="col-md-10">
+                        <select class="form-control" id="TipoRequerenteId" name="tipo" ng-model="aRequerente.TipoRequerenteId" ng-options="tipo.TipoRequerenteId as tipo.Descricao for tipo in tipos" ng-required="true">
+                            <option value="">Selecione</option>
+                        </select>
+                        <p ng-show="requerenteForm.tipo.$error.required" class="help-block">Escolha um tipo de requerente</p>
+                    </div>
+                </div>
+
+                @* Formulario para vincular processo a requerente*@
+                <div ng-hide="!aRequerente.Nome">
+                    <h5>Vicular Processo</h5>
+                    <div class="form-group" ng-class="{ 'has-error' : requerenteForm.aRequerenteRecorrido.$invalid && !requeretenForm.aRequerenteRecorrido.$pristine }">
+                        <label class="control-label col-md-2">Recorrido</label>
+                        <div class="col-md-10">
+                            <input class="form-control" name="aRequerenteRecorrido" ng-model="aRequerente.Recorrido" type="text" value="" ng-minlength="3" />
+                            <p ng-show="requerenteForm.aRequerenteRecorrido.$error.minlength" class="help-block">Nome no mínimo 3 caracteres.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-2">Número</label>
+                        <div class="col-md-10">
+                            <input class="form-control " name="aRequerente.Numero" ng-model="aRequerente.Numero" type="text" value="" />
+                        </div>
+                    </div>
+
+                    <div class="form-group" ng-class="{ 'has-error' : requerenteForm.aRequerentePlaca.$invalid && !requeretenForm.aRequerentePlaca.$pristine }">
+                        <label class="control-label col-md-2">Placa</label>
+                        <div class="col-md-10">
+                            <input class="form-control " name="aRequerentePlaca" ng-model="aRequerente.Placa" type="text" value="" ng-minlength="3" />
+                            <p ng-show="requerenteForm.aRequerentePlaca.$error.minlength" class="help-block"> Preencha o esse campo.  </p>
+                        </div>
+                    </div>
+
+                    <div class="form-group" ng-class="{ 'has-error' : requerenteForm.aRequerenteDataEntrada.$invalid && !requeretenForm.aRequerenteDataEntrada.$pristine }">
+                        <label class="control-label col-md-2">Data Entrada</label>
+                        <div class="col-md-10">
+                            <input class="form-control  " name="aRequerenteDataEntrada" ng-model="aRequerente.DataEntrada" type="date" value="" placeholder="dd/MM/yyyy" min="01/01/2010" max="31/12/2025"
+                                   ng-pattern='\d{1,2}/\d{1,2}/\d{4}' />
+                            <p ng-show="requerenteForm.aRequerenteDataEntrada.$error.minlength" class="help-block">Informe uma data correta</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div id="btns" class="col-md-offset-3 col-md-10">
+                        <input type="button" value="Salvar" ng-click="AddRequerente(aRequerente)" ng-disabled="!aRequerente.Nome" class="btn btn-facebook" />
+                    </div>
+                </div>
+            </form>
+
+
+
+            @*<div ng-show="requerente.length > 0" id="tabelaRequerente">
+                <h2>Lista de Requerente</h2>
+                <div style=" height:200px; overflow: auto;">
+                    <table class="table table-striped table-bordered ">
+                        <thead>
+                            <tr>
+                                <th>SL</th>
+                                <th><a href="" ng-click="ordenarPor('Nome')">Nome</a></th>
+                                <th>Cpf</th>
+                                <th>Cnpj</th>
+                                <th>Painel</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="aRequerente in requerente">
+
+                                <td>{{$index + 1}}</td>
+                                <td>{{aRequerente.Nome}}</td>
+                                <td>{{aRequerente.Cpf}}</td>
+                                <td>{{aRequerente.Cpnj}}</td>
+                                <td>
+
+                                    <a href="#" ng-click="RequerentePorId(aRequerente.RequerenteId)" class="fa fa-edit" title="Editar"></a> |
+                                    <a href="#" ng-click="DeleteRequerentePorId(aRequerente.RequerenteId, $index )" class="fa fa-trash-o" title="Excluir"></a> |
+                                    <a href="#" ng-click="RequerentePorId(aRequerente.RequerenteId)" class="fa fa-arrow-circle-right"> Vincular Processo</a>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>*@
+        </div>
+
+    </div>
+
